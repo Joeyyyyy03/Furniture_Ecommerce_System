@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block styles %}
+.checkout-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.order-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.payment-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.payment-option {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+}
+
+.payment-fields {
+    margin-top: 15px;
+}
+
+.payment-fields input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.back-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.place-order-btn {
+    background-color: #2196f3;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    padding: 10px;
+    margin: 10px 0;
+    background: #fff0f0;
+    border: 1px solid red;
+    border-radius: 4px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>Checkout</h1>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="order-summary">
+        <h2>Order Summary</h2>
+        <p>Subtotal: ${{ cart.get_subtotal }}</p>
+        {% if cart.shipping_method %}
+            <p>Shipping ({{ cart.shipping_method.description }}): ${{ cart.get_shipping_cost }}</p>
+        {% endif %}
+        <h3>Total: ${{ cart.get_total }}</h3>
+    </div>
+
+    <form method="post" action="{% url 'checkout' %}" id="payment-form">
+        {% csrf_token %}
+        
+        <div class="payment-section">
+            <h2>Select Payment Method</h2>
+            
+            <div class="payment-option">
+                <input type="radio" id="credit_card" name="payment_type" value="credit_card" required>
+                <label for="credit_card">Credit Card</label>
+                <div class="payment-fields credit-card-fields" style="display: none;">
+                    <input type="text" name="card_number" placeholder="Card Number" pattern="\d{16}" maxlength="16">
+                    <input type="text" name="expiry_date" placeholder="MM/YY" pattern="\d{2}/\d{2}" maxlength="5">
+                    <input type="text" name="cvv" placeholder="CVV" pattern="\d{3,4}" maxlength="4">
+                </div>
+            </div>
+
+            <div class="payment-option">
+                <input type="radio" id="ewallet" name="payment_type" value="ewallet" required>
+                <label for="ewallet">E-Wallet</label>
+                <div class="payment-fields ewallet-fields" style="display: none;">
+                    <input type="text" name="wallet_id" placeholder="Wallet ID">
+                    <input type="password" name="wallet_password" placeholder="Wallet Password">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <a href="{% url 'cart' %}" class="back-button">Back to Cart</a>
+            <button type="submit" class="place-order-btn">Place Order</button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const creditCardRadio = document.getElementById('credit_card');
+    const ewalletRadio = document.getElementById('ewallet');
+    const creditCardFields = document.querySelector('.credit-card-fields');
+    const ewalletFields = document.querySelector('.ewallet-fields');
+    const form = document.getElementById('payment-form');
+
+    function togglePaymentFields() {
+        creditCardFields.style.display = creditCardRadio.checked ? 'block' : 'none';
+        ewalletFields.style.display = ewalletRadio.checked ? 'block' : 'none';
+    }
+
+    creditCardRadio.addEventListener('change', togglePaymentFields);
+    ewalletRadio.addEventListener('change', togglePaymentFields);
+
+    form.addEventListener('submit', function(e) {
+        const selectedPayment = document.querySelector('input[name="payment_type"]:checked');
+        
+        if (!selectedPayment) {
+            e.preventDefault();
+            alert('Please select a payment method');
+            return;
+        }
+
+        if (selectedPayment.value === 'credit_card') {
+            const cardNumber = document.querySelector('input[name="card_number"]').value;
+            const expiryDate = document.querySelector('input[name="expiry_date"]').value;
+            const cvv = document.querySelector('input[name="cvv"]').value;
+
+            if (!cardNumber || !expiryDate || !cvv) {
+                e.preventDefault();
+                alert('Please fill in all credit card details');
+                return;
+            }
+        } else if (selectedPayment.value === 'ewallet') {
+            const walletId = document.querySelector('input[name="wallet_id"]').value;
+            const walletPassword = document.querySelector('input[name="wallet_password"]').value;
+
+            if (!walletId || !walletPassword) {
+                e.preventDefault();
+                alert('Please fill in all e-wallet details');
+                return;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

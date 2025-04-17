@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block styles %}
+/* Welcome section styling */
+.welcome-header {
+    text-align: center;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.welcome-header h1 {
+    font-family: 'Cambria';
+    font-size: 4em;
+    font-weight: 400;
+    color: #333;
+    margin: 0;
+}
+
+/* Product container styling */
+.products-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Product card styling */
+.product-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.product-title {
+    color: #2c5282;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.product-description {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.product-price {
+    color: #2196f3;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 15px 0;
+}
+
+.stock-info {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Options styling */
+.options-container {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.option-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.option-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Checkbox styling */
+.option-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #2196f3;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Select styling */
+.option-group select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* Button styling */
+.add-to-cart-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #1976d2;
+}
+
+/* Badge styling */
+.option-badge {
+    background-color: #ff4444;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="welcome-header">
+    <h1>Welcome to FurniDelight</h1>
+</div>
+
+<div class="products-container">
+    {% for product in products %}
+    <div class="product-card">
+        <h2 class="product-title">{{ product.name }}</h2>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="product-price">${{ product.price }}</div>
+        <p class="stock-info">In Stock: {{ product.quantity }}</p>
+        
+        <form method="POST" action="{% url 'add_to_cart' product.id %}">
+            {% csrf_token %}
+            <div class="options-container">
+                <div class="option-group">
+                    <input type="checkbox" id="warranty-{{ product.id }}" name="warranty">
+                    <label for="warranty-{{ product.id }}">Add Warranty</label>
+                    <select name="warranty_duration">
+                        <option value="12">12 months <span class="option-badge">+$30</span></option>
+                        <option value="24">24 months <span class="option-badge">+$60</span></option>
+                        <option value="36">36 months <span class="option-badge">+$90</span></option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <input type="checkbox" id="gift-wrap-{{ product.id }}" name="gift_wrap">
+                    <label for="gift-wrap-{{ product.id }}">Add Gift Wrap</label>
+                    <select name="gift_wrap_type">
+                        <option value="normal">Normal <span class="option-badge">+$10</span></option>
+                        <option value="premium">Premium <span class="option-badge">+$15</span></option>
+                        <option value="luxury">Luxury <span class="option-badge">+$20</span></option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

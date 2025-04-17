@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block styles %}
+.notifications-container {
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.notification {
+    background: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.notification.unread {
+    border-left: 4px solid #2196f3;
+    background-color: #f8f9fa;
+}
+
+.notification-content {
+    margin-bottom: 10px;
+}
+
+.message {
+    font-size: 16px;
+    margin: 0 0 5px 0;
+}
+
+.timestamp {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.mark-read-btn {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.mark-read-btn:hover {
+    background-color: #1976d2;
+}
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+    <h1>Notifications</h1>
+    
+    {% if notifications %}
+        {% for notification in notifications %}
+            <div class="notification {% if not notification.is_read %}unread{% endif %}">
+                <div class="notification-content">
+                    <p class="message">{{ notification.message }}</p>
+                    <p class="timestamp">{{ notification.created_at|date:"F j, Y, g:i a" }}</p>
+                </div>
+                {% if not notification.is_read %}
+                    <form method="post" action="{% url 'mark_notification_read' notification.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mark-read-btn">Mark as Read</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No notifications yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FurniDelight - Admin Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-profile {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #ff9800;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .profile-section {
+            margin-bottom: 25px;
+        }
+
+        .profile-section h2 {
+            font-size: 20px;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .profile-info {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .profile-info p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: 12px 25px;
+            margin: 0 10px;
+            background-color: #2196f3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: #1976d2;
+        }
+
+        @media (max-width: 600px) {
+            .nav-links a {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-profile">
+        <h1>Admin Profile <span class="admin-badge">Admin</span></h1>
+        
+        <div class="profile-section">
+            <h2>Account Information</h2>
+            <div class="profile-info">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Status:</strong> Administrator</p>
+            </div>
+        </div>
+        
+        <div class="nav-links">
+            <a href="{% url 'home' %}">Back to Home</a>
+            <a href="{% url 'admin:index' %}">Admin Dashboard</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

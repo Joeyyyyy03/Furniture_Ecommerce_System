@@ -1,0 +1,35 @@
+<form method="post" action="{% url 'add_to_cart' product.id %}">
+    {% csrf_token %}
+    
+    <div class="product-info">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p>{{ product.dimensions }}</p>
+        <p class="price">${{ product.price }}</p>
+        <p>In Stock: {{ product.quantity }}</p>
+    </div>
+
+    <!-- Warranty Option -->
+    <div class="option-group">
+        <input type="checkbox" name="warranty" id="warranty">
+        <label for="warranty">Add Warranty</label>
+        <select name="warranty_duration" id="warranty_duration">
+            <option value="12">12 months (+$30)</option>
+            <option value="24">24 months (+$60)</option>
+            <option value="36">36 months (+$90)</option>
+        </select>
+    </div>
+
+    <!-- Gift Wrap Option -->
+    <div class="option-group">
+        <input type="checkbox" name="gift_wrap" id="gift_wrap">
+        <label for="gift_wrap">Add Gift Wrap</label>
+        <select name="gift_wrap_type" id="gift_wrap_type">
+            <option value="normal">Normal (+$10)</option>
+            <option value="premium">Premium (+$15)</option>
+            <option value="luxury">Luxury (+$20)</option>
+        </select>
+    </div>
+
+    <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+</form> 

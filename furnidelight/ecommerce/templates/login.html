@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurniDelight - Login</title>
+    <!-- Google Fonts: Poppins for the body and Pacifico for the title -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        /* Overall body styling */
+        body {
+            background-color: #f0f8ff;; /* Light pastel blue background */
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Stack the title and form vertically */
+            height: 100vh;
+        }
+
+        /* Login form container */
+        .login-form {
+            max-width: 500px;  /* Increased the form width */
+            width: 100%; /* Ensures the form is responsive */
+            padding: 40px; /* Increased padding for a larger form box */
+            border: 1px solid #ddd;
+            border-radius: 10px; /* Rounded corners */
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly larger shadow for effect */
+        }
+
+        /* Title inside the form */
+        .login-form h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'copperplate';
+            color: #333;
+        }
+
+        /* Form group and label styling */
+        .form-group {
+            margin-bottom: 25px; /* Increased space between form fields */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        /* Input fields styling */
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px; /* Rounded corners for inputs */
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #f9f9f9; /* Slightly grayish background for text inputs */
+            color: #333;
+        }
+
+        /* Input fields on focus */
+        input:focus {
+            border-color: #2196f3; /* Blue border on focus */
+            outline: none;
+            background-color: #fff; /* Clear background color when focused */
+        }
+
+        /* Error message styling */
+        .error-message {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ffcdd2;
+            font-size: 14px;
+        }
+
+        /* Submit button styling */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 8px; /* Rounded corners for button */
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1976d2;
+        }
+
+        /* Register link styling */
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: #2196f3;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-form">
+        <h1>Login</h1>
+        {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div class="register-link">
+            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html>

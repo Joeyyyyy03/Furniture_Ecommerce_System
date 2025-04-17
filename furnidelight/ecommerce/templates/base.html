@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurniDelight - {% block title %}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+        }
+
+        /* Navigation bar */
+        .navbar {
+            background-color: #2196f3;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            color: white;
+            font-size: 28px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-link:hover {
+            opacity: 0.9;
+        }
+
+        /* Notification badge */
+        .notification-badge {
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            position: absolute;
+            top: -8px;
+            right: -12px;
+        }
+
+        /* Content area */
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        {% block styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-brand">FurniDelight</a>
+        <div class="nav-items">
+            {% if user.is_authenticated %}
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                {% if not user.is_admin %}
+                    <a href="{% url 'cart' %}" class="nav-link">
+                        Cart
+                        {% if request.resolver_match.url_name == 'cart' %}
+                            <span class="notification-badge">1</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+                <a href="{% url 'notifications' %}" class="nav-link" style="position: relative;">
+                    Notifications
+                    <span class="notification-badge">{% if unread_count > 0 %}{{ unread_count }}{% else %}1{% endif %}</span>
+                </a>
+                <a href="{% url 'profile' %}" class="nav-link">
+                    Profile
+                    {% if request.resolver_match.url_name == 'profile' %}
+                        <span class="notification-badge">1</span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'register' %}" class="nav-link">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

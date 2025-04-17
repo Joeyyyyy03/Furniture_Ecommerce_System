@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block styles %}
+.cart-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.cart-header h1 {
+    color: #333;
+    font-size: 2em;
+    margin: 0;
+}
+
+.back-button {
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.cart-item {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.cart-item h3 {
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.cart-item p {
+    color: #666;
+    margin: 5px 0;
+}
+
+.delete-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
+.total {
+    text-align: right;
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.continue-shopping {
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.proceed-checkout {
+    background-color: #2196f3;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.shipping-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.shipping-section h2 {
+    color: #333;
+    margin: 0 0 15px 0;
+}
+
+.shipping-section select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.shipping-section button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.shipping-section button:hover {
+    background-color: #1976d2;
+}
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>Your Shopping Cart</h1>
+    </div>
+
+    {% if cart.cartproduct_set.all %}
+        {% for cart_product in cart.cartproduct_set.all %}
+            <div class="cart-item">
+                <h3>{{ cart_product.product.name }}</h3>
+                <p>{{ cart_product.product.dimensions }}</p>
+                <p>Price: ${{ cart_product.product.price }}</p>
+                <p>Quantity: {{ cart_product.quantity }}</p>
+                <p>Subtotal: ${{ cart_product.get_subtotal }}</p>
+                
+                {% if cart_product.warranty_duration %}
+                    <p>Warranty ({{ cart_product.warranty_duration }} months): +${{ cart_product.get_warranty_cost }}</p>
+                {% endif %}
+                
+                {% if cart_product.gift_wrap_type %}
+                    <p>Gift wrap ({{ cart_product.gift_wrap_type }}): +${{ cart_product.get_gift_wrap_cost }}</p>
+                {% endif %}
+                
+                <form method="post" action="{% url 'delete_cart_item' cart_product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+                <p><strong>Total: ${{ cart_product.total_price }}</strong></p>
+            </div>
+        {% endfor %}
+
+        <!-- Add Shipping Method Selection -->
+        <form method="post" action="{% url 'update_shipping' %}">
+            {% csrf_token %}
+            <div class="shipping-section">
+                <h2>Select Shipping Method</h2>
+                <select name="shipping_method" required>
+                    {% for method in shipping_methods %}
+                        <option value="{{ method.id }}" {% if cart.shipping_method.id == method.id %}selected{% endif %}>
+                            {{ method.description }} - ${{ method.cost }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Update Shipping</button>
+            </div>
+        </form>
+
+        <div class="total">
+            <p>Subtotal: ${{ cart.get_subtotal }}</p>
+            {% if cart.shipping_method %}
+                <p>Shipping ({{ cart.shipping_method.description }}): ${{ cart.get_shipping_cost }}</p>
+            {% endif %}
+            <p><strong>Total: ${{ cart.get_total }}</strong></p>
+        </div>
+
+        <div class="button-container">
+            <a href="{% url 'home' %}" class="continue-shopping">Continue Shopping</a>
+            <a href="{% url 'checkout' %}" class="proceed-checkout">Proceed to Checkout</a>
+        </div>
+    {% else %}
+        <p>Your cart is empty.</p>
+        <div class="button-container">
+            <a href="{% url 'home' %}" class="continue-shopping">Continue Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
